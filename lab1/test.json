@@ -1,0 +1,14 @@
+{
+    "list": [
+        {
+            "login": "user1",
+            "mail": "123@example.com",
+            "pass": "qwerty"
+        },
+        {
+            "login": "user2",
+            "mail": "456@example.com",
+            "pass": "password"
+        }
+    ]
+}
