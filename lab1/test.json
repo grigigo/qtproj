@@ -1,14 +1,19 @@
 {
     "list": [
         {
-            "login": "user1",
-            "mail": "123@example.com",
-            "pass": "qwerty"
+            "login": "example",
+            "pass": "example",
+            "url": "example"
         },
         {
-            "login": "user2",
-            "mail": "456@example.com",
-            "pass": "password"
+            "login": "kitty",
+            "pass": "meow228",
+            "url": "meow.com"
+        },
+        {
+            "login": "gawr gura",
+            "pass": "a",
+            "url": "hololive"
         }
     ]
 }

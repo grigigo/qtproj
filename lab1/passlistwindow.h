@@ -9,6 +9,9 @@
 #include <QToolButton>
 #include <QLineEdit>
 #include <QClipboard>
+#include <QTableWidgetItem>
+#include <QTableWidget>
+#include "addpasslog.h"
 
 namespace Ui {
 class PassListWindow;
@@ -25,11 +28,16 @@ public:
 private:
     Ui::PassListWindow *ui;
     QClipboard *clipboard;
-    void createListElem(QJsonObject elem);
+    addPassLog *addpasslog;
+    QJsonDocument doc;
     QString createButton(QString text);
+    void createPassTable(QJsonDocument d, QString text);
 
 private slots:
-    void on_multiplyButton_clicked();
+    void onTableClicked(const QModelIndex &index);
+    void on_searchButton_clicked();
+    void addElem(const QJsonObject &obj);
+    void on_addElemBtn_clicked();
 
 signals:
     void passListSign();

@@ -7,106 +7,88 @@ PassListWindow::PassListWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QClipboard *clipboard = QApplication::clipboard();
+    addpasslog = new addPassLog;
+    connect(addpasslog, SIGNAL(passListSignal(const QJsonObject &)), this, SLOT(addElem(const QJsonObject &)));
+    connect(addpasslog, &addPassLog::toPassList, this, &PassListWindow::show);
 
-    QPushButton *button = new QPushButton(tr("Copy!"));
-    connect(button, &QPushButton::clicked, this, &PassListWindow::on_multiplyButton_clicked);
+    QClipboard *clipboard = QApplication::clipboard();
 
     QFile file;
     file.setFileName("../lab1/test.json");
-    file.open(QIODevice::ReadOnly | QIODevice::Text); //WriteOnly
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
     QString text = file.readAll();
     file.close();
-    QJsonDocument d = QJsonDocument::fromJson(text.toUtf8());
-    qWarning() << d << "\n";
-    qWarning() << d.object().value("list").toArray() << "\n";
-    qWarning() << d.object().value("list").toArray().size() << "\n";
 
-    for (int i = 0; i < d.object().value("list").toArray().size(); ++i) {
-        //qWarning() << d.object().value("list").toArray()[i].toObject();
-        createListElem(d.object().value("list").toArray()[i].toObject());
-    }
+    doc = QJsonDocument::fromJson(text.toUtf8());
 
-    qWarning() << "";
+    //QJsonDocument doc = QJsonDocument::fromJson(text.toUtf8());
 
-    file.setFileName("../lab1/test.json");
+    createPassTable(doc, "");
+
+    ui->tablePassLog->resizeRowsToContents();
+    ui->tablePassLog->resizeColumnsToContents();
+
     file.open(QIODevice::WriteOnly);
-
-    QJsonArray array;
-    QJsonObject final;
-
     QJsonObject test1;
-    test1.insert("mail", "123@example.com");
-    test1.insert("login", "user1");
-    test1.insert("pass", "qwerty");
+    test1.insert("url", "test@example");
+    test1.insert("login", "user");
+    test1.insert("pass", "password");
 
     QJsonObject test2;
-    test2.insert("mail", "456@example.com");
-    test2.insert("login", "user2");
-    test2.insert("pass", "password");
+    test2.insert("url", "test123@example");
+    test2.insert("login", "user123");
+    test2.insert("pass", "password123");
+
+    QJsonArray array;
 
 
+    QJsonObject final;
     array.append(test1);
     array.append(test2);
+
+    QJsonDocument newDoc;
     final.insert("list", array);
+    newDoc.setObject(final);
+    file.write(newDoc.toJson());
 
-    qWarning() << array << "\n";
-
-    QJsonDocument jsonDoc;
-    jsonDoc.setObject(final);
-    file.write(jsonDoc.toJson());
     file.close();
 
+    connect(ui->tablePassLog, SIGNAL(clicked(const QModelIndex &)), this, SLOT(onTableClicked(const QModelIndex &)));
 }
 
-void PassListWindow::on_multiplyButton_clicked() {
-    //button.objectName();
-    //self.pushButton_9_3.objectName()
-    QPushButton *btn = qobject_cast<QPushButton *>(sender());
-    clipboard->setText(btn->accessibleName());
+void PassListWindow::createPassTable(QJsonDocument d, QString search_line) {
+    ui->tablePassLog->setRowCount(0);
+    ui->tablePassLog->setColumnCount(3);
+    ui->tablePassLog->setHorizontalHeaderItem(0, new QTableWidgetItem("Url"));
+    ui->tablePassLog->setHorizontalHeaderItem(1, new QTableWidgetItem("Login"));
+    ui->tablePassLog->setHorizontalHeaderItem(2, new QTableWidgetItem("Password"));
+    for (int i = 0; i < d.object().value("list").toArray().size(); ++i) {
+        if (d.object().value("list").toArray()[i].toObject().value("url").toString().contains(search_line)) {
+            ui->tablePassLog->insertRow(ui->tablePassLog->rowCount());
+
+            QTableWidgetItem *item = new QTableWidgetItem;
+            item->setText("        " + d.object().value("list").toArray()[i].toObject().value("url").toString() + "        ");
+            item->setData(Qt::UserRole, d.object().value("list").toArray()[i].toObject().value("url").toString());
+            item->setTextAlignment(Qt::AlignCenter);
+            ui->tablePassLog->setItem(ui->tablePassLog->rowCount()-1, 0, item);
+
+            item = new QTableWidgetItem;
+            item->setText("        " + createButton(d.object().value("list").toArray()[i].toObject().value("login").toString()) + "        ");
+            item->setData(Qt::UserRole, d.object().value("list").toArray()[i].toObject().value("login").toString());
+            item->setTextAlignment(Qt::AlignCenter);
+            ui->tablePassLog->setItem(ui->tablePassLog->rowCount()-1, 1, item);
+
+            item = new QTableWidgetItem;
+            item->setText("        " + createButton(d.object().value("list").toArray()[i].toObject().value("pass").toString()) + "        ");
+            item->setData(Qt::UserRole, d.object().value("list").toArray()[i].toObject().value("pass").toString());
+            item->setTextAlignment(Qt::AlignCenter);
+            ui->tablePassLog->setItem(ui->tablePassLog->rowCount()-1, 2, item);
+        }
+    }
 }
 
-void PassListWindow::createListElem(QJsonObject elem) {
-    QHBoxLayout *buttonsLayout = new QHBoxLayout;
-    ui->layoutList->addLayout(buttonsLayout);
-    qWarning() << elem;
-
-    /*
-    QLineEdit *lineEdit = new QLineEdit(tr("mail%1").arg(ui->layoutList->count()));
-    lineEdit->setEchoMode(QLineEdit::Password);
-    lineEdit->setReadOnly(true);
-    lineEdit->setText(elem.value("mail").toString());
-    buttonsLayout->addWidget(lineEdit);
-    lineEdit = new QLineEdit(tr("login%1").arg(ui->layoutList->count()));
-    lineEdit->setEchoMode(QLineEdit::Password);
-    lineEdit->setReadOnly(true);
-    lineEdit->setText(elem.value("login").toString());
-    buttonsLayout->addWidget(lineEdit);
-    lineEdit = new QLineEdit(tr("password%1").arg(ui->layoutList->count()));
-    lineEdit->setEchoMode(QLineEdit::Password);
-    lineEdit->setReadOnly(true);
-    lineEdit->setText(elem.value("pass").toString());
-    buttonsLayout->addWidget(lineEdit);
-    */
-
-    QPushButton *lineEdit = new QPushButton;
-    lineEdit->setAccessibleName(elem.value("mail").toString());
-    connect(lineEdit, SIGNAL(clicked()), this, SLOT(on_multiplyButton_clicked()));
-    lineEdit->setText(createButton(elem.value("mail").toString()));
-    lineEdit->setFlat(true);
-    buttonsLayout->addWidget(lineEdit);
-    lineEdit = new QPushButton;
-    lineEdit->setAccessibleName(elem.value("login").toString());
-    connect(lineEdit, SIGNAL(clicked()), this, SLOT(on_multiplyButton_clicked()));
-    lineEdit->setText(createButton(elem.value("login").toString()));
-    lineEdit->setFlat(true);
-    buttonsLayout->addWidget(lineEdit);
-    lineEdit = new QPushButton;
-    lineEdit->setAccessibleName(elem.value("pass").toString());
-    connect(lineEdit, SIGNAL(clicked()), this, SLOT(on_multiplyButton_clicked()));
-    lineEdit->setText(createButton(elem.value("pass").toString()));
-    lineEdit->setFlat(true);
-    buttonsLayout->addWidget(lineEdit);
+void PassListWindow::onTableClicked(const QModelIndex &index) {
+    clipboard->setText(index.data(Qt::UserRole).toString());
 }
 
 QString PassListWindow::createButton(QString text) {
@@ -121,3 +103,47 @@ PassListWindow::~PassListWindow()
 {
     delete ui;
 }
+
+void PassListWindow::on_searchButton_clicked()
+{
+    QString searchText = ui->searchLine->text();
+    ui->tablePassLog->clear();
+
+    /*
+    QFile file;
+    file.setFileName("../lab1/test.json");
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QString text = file.readAll();
+    file.close();
+    QJsonDocument doc = QJsonDocument::fromJson(text.toUtf8());
+    */
+
+    createPassTable(doc, searchText);
+}
+
+void PassListWindow::on_addElemBtn_clicked()
+{
+    this->close();
+    addpasslog->show();
+}
+
+void PassListWindow::addElem(const QJsonObject &elem) {
+    QFile file;
+    file.setFileName("../lab1/test.json");
+    file.open(QIODevice::WriteOnly);
+
+    QJsonArray array = doc.object().value("list").toArray();
+    qWarning() << doc.object().value("list").toArray();
+    qWarning() << array;
+    QJsonObject obj;
+
+    array.append(elem);
+    qWarning() << array;
+    obj.insert("list", array);
+    doc.setObject(obj);
+    file.write(doc.toJson());
+    file.close();
+
+    createPassTable(doc, "");
+}
+

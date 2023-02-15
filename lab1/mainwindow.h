@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <passlistwindow.h>
+#include "passlistwindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
