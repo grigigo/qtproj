@@ -147,3 +147,9 @@ void PassListWindow::addElem(const QJsonObject &elem) {
     createPassTable(doc, "");
 }
 
+
+void PassListWindow::on_tablePassLog_cellDoubleClicked(int row, int column)
+{
+    ui->tablePassLog->removeRow(row);
+}
+

@@ -1,19 +1,14 @@
 {
     "list": [
         {
-            "login": "example",
-            "pass": "example",
-            "url": "example"
+            "login": "user",
+            "pass": "password",
+            "url": "test@example"
         },
         {
-            "login": "kitty",
-            "pass": "meow228",
-            "url": "meow.com"
-        },
-        {
-            "login": "gawr gura",
-            "pass": "a",
-            "url": "hololive"
+            "login": "user123",
+            "pass": "password123",
+            "url": "test123@example"
         }
     ]
 }

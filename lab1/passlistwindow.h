@@ -39,6 +39,8 @@ private slots:
     void addElem(const QJsonObject &obj);
     void on_addElemBtn_clicked();
 
+    void on_tablePassLog_cellDoubleClicked(int row, int column);
+
 signals:
     void passListSign();
 };
