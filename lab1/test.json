@@ -9,6 +9,11 @@
             "login": "user123",
             "pass": "password123",
             "url": "test123@example"
+        },
+        {
+            "login": "grisha",
+            "pass": "676767",
+            "url": "example.ru"
         }
     ]
 }

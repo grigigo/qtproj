@@ -21,8 +21,7 @@ public:
 private slots:
     void on_pushButton_clicked();
     bool authorize(QString password);
-
-    void on_wrongPassAlert_clicked();
+    void on_passEnterLine_textChanged();
 
 private:
     Ui::MainWindow *ui;

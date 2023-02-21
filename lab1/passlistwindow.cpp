@@ -11,7 +11,7 @@ PassListWindow::PassListWindow(QWidget *parent) :
     connect(addpasslog, SIGNAL(passListSignal(const QJsonObject &)), this, SLOT(addElem(const QJsonObject &)));
     connect(addpasslog, &addPassLog::toPassList, this, &PassListWindow::show);
 
-    QClipboard *clipboard = QApplication::clipboard();
+    clipboard = QApplication::clipboard();
 
     QFile file;
     file.setFileName("../lab1/test.json");
@@ -148,7 +148,7 @@ void PassListWindow::addElem(const QJsonObject &elem) {
 }
 
 
-void PassListWindow::on_tablePassLog_cellDoubleClicked(int row, int column)
+void PassListWindow::on_tablePassLog_cellDoubleClicked(int row)
 {
     ui->tablePassLog->removeRow(row);
 }

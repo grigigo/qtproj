@@ -34,9 +34,8 @@ void MainWindow::on_pushButton_clicked()
 }
 
 
-void MainWindow::on_wrongPassAlert_clicked()
+void MainWindow::on_passEnterLine_textChanged()
 {
-    ui->passEnterLine->setText("");
     ui->wrongPassAlert->setVisible(false);
 }
 
