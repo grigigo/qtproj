@@ -25,7 +25,7 @@ private:
     Ui::addPassLog *ui;
 
 signals:
-    void passListSignal(QString url, QString obj);
+    void passListSignal(QString url, QByteArray logpass);
 
 private slots:
     void on_addBtn_clicked();

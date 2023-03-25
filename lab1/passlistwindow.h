@@ -42,7 +42,7 @@ public slots:
     void on_addElemBtn_clicked();
     void on_tablePassLog_cellDoubleClicked(int row, int column);
     void check_pass(QString pass);
-    void passListSignal(QString url, QString obj);
+    void passListSignal(QString url, QByteArray logpass);
 
 signals:
     void pageSwap(bool isCorrect);

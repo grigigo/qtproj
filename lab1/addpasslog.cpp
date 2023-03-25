@@ -14,16 +14,15 @@ addPassLog::~addPassLog()
 }
 
 void addPassLog::on_addBtn_clicked() {
-    QString login = ui->loginLineEdit->text();
-    QString pass = ui->passLineEdit->text();
+    QJsonDocument doc;
+    QJsonObject obj;
+    obj.insert("login", ui->loginLineEdit->text());
+    obj.insert("pass", ui->passLineEdit->text());
+    doc.setObject(obj);
+
     QString url = ui->urlLineEdit->text();
-    QString logpass = "{"
-                      "\n\t\"login\":" + login + ","
-                      "\n\t\"password\":" + pass +
-                      "}";
-    qDebug() << logpass;
 
     this->close();
-    //passListSignal(url, logpass);
+    passListSignal(url, doc.toJson());
 }
 

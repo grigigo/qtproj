@@ -15,26 +15,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QLineEdit" name="searchLine"/>
-    </item>
-    <item row="2" column="0" colspan="3">
-     <widget class="QTableWidget" name="tablePassLog">
-      <property name="font">
-       <font>
-        <pointsize>16</pointsize>
-       </font>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="2">
-     <widget class="QPushButton" name="searchButton">
-      <property name="text">
-       <string>Поиск</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
      <widget class="QPushButton" name="addElemBtn">
       <property name="font">
        <font>
@@ -43,6 +24,25 @@
       </property>
       <property name="text">
        <string>Добавить</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="4">
+     <widget class="QTableWidget" name="tablePassLog">
+      <property name="font">
+       <font>
+        <pointsize>16</pointsize>
+       </font>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLineEdit" name="searchLine"/>
+    </item>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="searchButton">
+      <property name="text">
+       <string>Поиск</string>
       </property>
      </widget>
     </item>

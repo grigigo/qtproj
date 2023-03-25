@@ -125,60 +125,113 @@ QString CryptoController::decrypt_record(const QByteArray &record, QString index
 
     QJsonDocument json_doc = QJsonDocument::fromJson(QByteArray((char *)decrypted_buf, decrypted_len));
     result = json_doc.object().value(index).toString();
-    qDebug() << result;
 
     EVP_CIPHER_CTX_free(ctx);
 
     return result;
 }
 
-QString CryptoController::encrypt_login_password(QString logpass, const QByteArray &key) {
-    QString result;
-
-    //QJsonObject::
+QByteArray CryptoController::encrypt_login_password(QByteArray logpass, const QByteArray &key) {
+    QByteArray result;
 
     EVP_CIPHER_CTX *ctx;
     if (!(ctx = EVP_CIPHER_CTX_new())) {
         return 0;
     }
 
-    // Инициализируем
     if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, (unsigned char*)key.data(), CryptoController::m_iv)){
         return 0;
     }
 
-//    QByteArray ciphertext = QByteArray::fromBase64(record);
-//    QBuffer buffer(&ciphertext);
-//    buffer.open(QBuffer::ReadOnly);
+    QByteArray plaintext = QByteArray(logpass);
+    QBuffer buffer(&plaintext);
+    buffer.open(QBuffer::ReadOnly);
 
-//    char encrypted_buf[256] = {0};
-//    unsigned char decrypted_buf[256] = {0};
-//    int decrypted_len = 0;
-//    int read_len = buffer.read(encrypted_buf, 256);
+    unsigned char encrypted_buf[256] = {0};
+    char decrypted_buf[256] = {0};
+    int encrypted_len = 0;
+    int read_len = buffer.read(decrypted_buf, 256);
 
-//    // Расшифруем
-//    if (1 != EVP_EncryptUpdate(ctx,
-//                               decrypted_buf, // выходной параметр, буфер
-//                               &decrypted_len, // выходной параметр, кол-во символов
-//                               (unsigned char *) encrypted_buf, // входной параметр, буфер
-//                               read_len)) {    // входной параметр, кол-во  символов
-//        return 0;
-//    }
+    if (1 != EVP_EncryptUpdate(ctx,
+                               encrypted_buf, // выходной параметр, буфер
+                               &encrypted_len, // выходной параметр, кол-во символов
+                               (unsigned char *) decrypted_buf, // входной параметр, буфер
+                               read_len)) {    // входной параметр, кол-во  символов
+        return 0;
+    }
 
-//    int tmplen;
-//    if (!EVP_EncryptFinal_ex(ctx, decrypted_buf + decrypted_len, &tmplen)) {
-//        /* Error */
-//        EVP_CIPHER_CTX_free(ctx);
-//        return 0;
-//    }
-//    decrypted_len += tmplen;
-//    buffer.close();
+    int tmplen;
+    if (!EVP_EncryptFinal_ex(ctx, encrypted_buf + encrypted_len, &tmplen)) {
+        /* Error */
+        EVP_CIPHER_CTX_free(ctx);
+        return 0;
+    }
+    encrypted_len += tmplen;
+    buffer.close();
 
-//    QJsonDocument json_doc = QJsonDocument::fromJson(QByteArray((char *)decrypted_buf, decrypted_len));
-//    result = json_doc.object().value(index).toString();
-//    qDebug() << result;
+    result = QByteArray((char *)encrypted_buf, encrypted_len).toBase64();
 
     EVP_CIPHER_CTX_free(ctx);
 
-    return 0;
+    return result;
+}
+
+
+bool CryptoController::encrypt_file(const QByteArray plaintext, const QString &filename, const QByteArray &key) {
+    EVP_CIPHER_CTX *ctx;
+    if (!(ctx = EVP_CIPHER_CTX_new())) {
+        return false;
+    }
+
+    if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, (unsigned char*)key.data(), CryptoController::m_iv)){
+        return false;
+    }
+
+    QByteArray not_yet_encoded = QByteArray(plaintext);
+    QBuffer buffer_stream(&not_yet_encoded);
+    buffer_stream.open(QBuffer::ReadOnly);
+
+    QByteArray buffer;
+    int read_len = 0, encrypted_len = 0;
+    while (true) {
+        unsigned char encrypted_buf[512] = {0};
+        char decrypted_buf[256] = {0};
+        read_len = buffer_stream.read(decrypted_buf, 256); // считать 256 байт
+
+        if (1 != EVP_EncryptUpdate(ctx,
+                                   encrypted_buf, // выходной параметр, буфер
+                                   &encrypted_len, // выходной параметр, кол-во символов
+                                   (unsigned char *) decrypted_buf, // входной параметр, буфер
+                                   read_len)) {    // входной параметр, кол-во  символов
+            return 0;
+        }
+
+        if (read_len < 256) {
+            int tmplen;
+            if (!EVP_EncryptFinal_ex(ctx, encrypted_buf + encrypted_len, &tmplen)) {
+                /* Error */
+                EVP_CIPHER_CTX_free(ctx);
+                return false;
+            }
+            encrypted_len += tmplen;
+            buffer += QByteArray((char *)encrypted_buf, encrypted_len);
+            break;
+        } else {
+            buffer += QByteArray((char *)encrypted_buf, encrypted_len);
+        }
+
+    }
+    EVP_CIPHER_CTX_free(ctx);
+    buffer_stream.close();
+
+    QFile encrypted_file;
+    encrypted_file.setFileName(filename);
+    encrypted_file.open(QIODevice::WriteOnly);
+    if (!encrypted_file.isOpen()) {
+        return false;
+    }
+    encrypted_file.write(buffer.toBase64());
+    encrypted_file.close();
+
+    return true;
 }

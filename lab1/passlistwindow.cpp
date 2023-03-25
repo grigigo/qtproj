@@ -9,7 +9,7 @@ PassListWindow::PassListWindow(QWidget *parent) :
     ui->setupUi(this);
 
     addpasslog = new addPassLog;
-    connect(addpasslog, SIGNAL(passListSignal(QString, QString)), this, SLOT(passListSignal(QString, QString)));
+    connect(addpasslog, SIGNAL(passListSignal(QString, QByteArray)), this, SLOT(passListSignal(QString, QByteArray)));
 
     clipboard = QApplication::clipboard();
 
@@ -40,7 +40,7 @@ void PassListWindow::createPassTable(QString search_line) {
 
                 QTableWidgetItem *item = new QTableWidgetItem;
                 item->setText("        " + (QString)record.site + "        ");
-                item->setData(Qt::UserRole, record.site);
+                item->setData(Qt::UserRole, (QString)record.site);
                 item->setTextAlignment(Qt::AlignCenter);
                 ui->tablePassLog->setItem(ui->tablePassLog->rowCount()-1, 0, item);
 
@@ -63,7 +63,12 @@ void PassListWindow::createPassTable(QString search_line) {
 }
 
 void PassListWindow::onTableClicked(const QModelIndex &index) {
-    clipboard->setText(CryptoController::decrypt_record(cridentials->toList()[index.row()].encrypted, index.data(Qt::UserRole).toString(), hex_hash));
+    if (index.column() != 0) {
+        clipboard->setText(CryptoController::decrypt_record(cridentials->toList()[index.row()].encrypted, index.data(Qt::UserRole).toString(), hex_hash));
+    } else {
+        clipboard->setText(index.data().toString());
+        qDebug() << index.data(Qt::UserRole).toString();
+    }
 }
 
 PassListWindow::~PassListWindow() {
@@ -74,15 +79,6 @@ void PassListWindow::on_searchButton_clicked() {
     QString searchText = ui->searchLine->text();
     ui->tablePassLog->clear();
 
-    /*
-    QFile file;
-    file.setFileName("../lab1/test.json");
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
-    QString text = file.readAll();
-    file.close();
-    QJsonDocument doc = QJsonDocument::fromJson(text.toUtf8());
-    */
-
     createPassTable(searchText);
 }
 
@@ -91,54 +87,57 @@ void PassListWindow::on_addElemBtn_clicked() {
     addpasslog->show();
 }
 
-void PassListWindow::passListSignal(QString url, QString obj) {
+void PassListWindow::passListSignal(QString url, QByteArray logpass) {
     this->show();
 
-    QString encrypted_logpass = CryptoController::encrypt_login_password(obj, hex_hash);
-    /*
-    QFile file;
-    file.setFileName("../lab1/test.json");
-    file.open(QIODevice::WriteOnly);
+    QByteArray encrypted_logpass = CryptoController::encrypt_login_password(logpass, hex_hash);
+    Cridentials new_record;
+    new_record.site = url.toUtf8();
+    new_record.encrypted = encrypted_logpass;
+    cridentials->append(new_record);
 
+    QJsonDocument doc;
+    QJsonArray array;
+    for (auto item : *cridentials) {
+        QJsonObject record;
+        record.insert("url", item.site.data());
+        record.insert("logpass", item.encrypted.data());
+        array.append(record);
+    }
+    QJsonObject list;
+    list.insert("list", array);
+    doc.setObject(list);
 
-    QJsonArray array = doc.object().value("list").toArray();
-    QJsonObject obj;
-    array.append(elem);
-    obj.insert("list", array);
-    doc.setObject(obj);
+    if (CryptoController::encrypt_file(doc.toJson(), "../lab1/cridentials.enc", hex_hash)) {
+        createPassTable("");
+    } else {
+        return;
+    }
 
-    file.write(doc.toJson());
-    file.close();
-
-    qWarning() << doc;
-    */
-    createPassTable("");
 }
 
 
 void PassListWindow::on_tablePassLog_cellDoubleClicked(int row, int column) {
-    /*
-    QFile file;
-    file.setFileName("../lab1/test.json");
-    file.open(QIODevice::WriteOnly);
+    cridentials->removeAt(row);
 
-    QJsonArray array = doc.object().value("list").toArray();
-    QJsonObject obj;
-
-    QString test = ui->tablePassLog->takeItem(row, column)->data(Qt::UserRole).toString();
-    for (int i = 0; i < doc.object().value("list").toArray().size(); ++i) {
-        if (array[i].toObject().value("url") == test) {
-            array.removeAt(i);
-        }
+    QJsonDocument doc;
+    QJsonArray array;
+    for (auto item : *cridentials) {
+        QJsonObject record;
+        record.insert("url", item.site.data());
+        record.insert("logpass", item.encrypted.data());
+        array.append(record);
     }
-    qWarning() << array;
+    QJsonObject list;
+    list.insert("list", array);
+    doc.setObject(list);
 
-    obj.insert("list", array);
-    doc.setObject(obj);
+    if (CryptoController::encrypt_file(doc.toJson(), "../lab1/cridentials.enc", hex_hash)) {
+        createPassTable("");
+    } else {
+        return;
+    }
 
-    file.write(doc.toJson());
-    file.close();
     ui->tablePassLog->removeRow(row);
-    */
 }
 
