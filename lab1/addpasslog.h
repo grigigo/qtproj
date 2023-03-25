@@ -25,8 +25,7 @@ private:
     Ui::addPassLog *ui;
 
 signals:
-    void toPassList();
-    void passListSignal(const QJsonObject &obj);
+    void passListSignal(QString url, QString obj);
 
 private slots:
     void on_addBtn_clicked();

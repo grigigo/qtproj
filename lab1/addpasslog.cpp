@@ -13,20 +13,17 @@ addPassLog::~addPassLog()
     delete ui;
 }
 
-void addPassLog::on_addBtn_clicked()
-{
-    QFile file;
-    file.setFileName("../lab1/test.json");
-    file.open(QIODevice::WriteOnly);
+void addPassLog::on_addBtn_clicked() {
+    QString login = ui->loginLineEdit->text();
+    QString pass = ui->passLineEdit->text();
+    QString url = ui->urlLineEdit->text();
+    QString logpass = "{"
+                      "\n\t\"login\":" + login + ","
+                      "\n\t\"password\":" + pass +
+                      "}";
+    qDebug() << logpass;
 
-    QJsonObject test;
-    test.insert("url", ui->urlLineEdit->text());
-    test.insert("login", ui->loginLineEdit->text());
-    test.insert("pass", ui->passLineEdit->text());
-
-    file.close();
-    passListSignal(test);
     this->close();
-    toPassList();
+    //passListSignal(url, logpass);
 }
 

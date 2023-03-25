@@ -1,19 +1,30 @@
 {
     "list": [
         {
-            "login": "user",
-            "pass": "password",
-            "url": "test@example"
+            "url": "test@example",
+            "logpass": "+hgHDbG02WZb7Q511l5zAr0qRQAbdsFgIlWA/nCK2n0NrzUMkuWwUA08GIM2WIMzfmRbYigAd2BvWilgbFKTkg=="
         },
         {
-            "login": "user123",
-            "pass": "password123",
-            "url": "test123@example"
+            "url": "test123@example",
+            "logpass": "+hgHDbG02WZb7Q511l5zAiDoVK3q43LFG6kc523sOE8n4lh6XVGMlTb1bU+NLvbYMiZTn+vnoL3LLPtVoY/8Kg=="
         },
         {
-            "login": "grisha",
-            "pass": "676767",
-            "url": "example.ru"
+            "url": "qq",
+            "logpass": "+hgHDbG02WZb7Q511l5zAkbjtj0U5gmVYk5DWeEHNtEinVzf9ukB3Sd6+lNLDf6Z"
         }
     ]
+}
+
+
+{
+    "login": "user", 
+    "password": "password"
+}
+{
+    "login": "user123", 
+    "password": "password123"
+}
+{
+    "login": "qq",
+    "password": "qq"
 }

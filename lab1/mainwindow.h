@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QString>
 #include "passlistwindow.h"
 
 QT_BEGIN_NAMESPACE
@@ -15,15 +16,18 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
     PassListWindow *passList;
 
-private slots:
+public slots:
     void on_pushButton_clicked();
-    bool authorize(QString password);
     void on_passEnterLine_textChanged();
+    void pageSwap(bool isCorrect);
 
 private:
     Ui::MainWindow *ui;
+
+signals:
+    void check_pass(QString pass);
+
 };
 #endif // MAINWINDOW_H

@@ -12,6 +12,9 @@
 #include <QTableWidgetItem>
 #include <QTableWidget>
 #include "addpasslog.h"
+#include "cryptocontroller.h"
+#include <QCryptographicHash>
+#include <QList>
 
 namespace Ui {
 class PassListWindow;
@@ -29,20 +32,20 @@ private:
     Ui::PassListWindow *ui;
     QClipboard *clipboard;
     addPassLog *addpasslog;
-    QJsonDocument doc;
-    QString createButton(QString text);
-    void createPassTable(QJsonDocument d, QString text);
+    void createPassTable(QString text);
+    QList<Cridentials> * cridentials = nullptr;
+    QByteArray hex_hash;
 
-private slots:
+public slots:
     void onTableClicked(const QModelIndex &index);
     void on_searchButton_clicked();
-    void addElem(const QJsonObject &obj);
     void on_addElemBtn_clicked();
-
-    void on_tablePassLog_cellDoubleClicked(int row);
+    void on_tablePassLog_cellDoubleClicked(int row, int column);
+    void check_pass(QString pass);
+    void passListSignal(QString url, QString obj);
 
 signals:
-    void passListSign();
+    void pageSwap(bool isCorrect);
 };
 
 #endif // PASSLISTWINDOW_H

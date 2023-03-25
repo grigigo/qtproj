@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "QString"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -10,27 +9,29 @@ MainWindow::MainWindow(QWidget *parent)
     ui->wrongPassAlert->setVisible(false);
 
     passList = new PassListWindow;
-    connect (passList, &PassListWindow::passListSign, this, &MainWindow::show);
+    connect(this, SIGNAL(check_pass(QString)), passList, SLOT(check_pass(QString)));
+    connect(passList, SIGNAL(pageSwap(bool)), this, SLOT(pageSwap(bool)));
 }
 
 MainWindow::~MainWindow() {
     delete ui;
 }
 
-bool MainWindow::authorize(QString password) {
-    QString truePass = "qwerty";
-    return truePass == password;
-}
 
-void MainWindow::on_pushButton_clicked()
-{
-    QString pass = ui->passEnterLine->text();
-    if (authorize(pass)) {
+void MainWindow::pageSwap(bool isCorrect) {
+    if (isCorrect) {
         this->close();
         passList->show();
     } else {
         ui->wrongPassAlert->setVisible(true);
     }
+}
+
+
+void MainWindow::on_pushButton_clicked()
+{
+    QString pass = ui->passEnterLine->text();
+    emit check_pass(pass);
 }
 
 
