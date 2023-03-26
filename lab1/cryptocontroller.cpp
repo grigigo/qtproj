@@ -6,9 +6,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-CryptoController::CryptoController(QObject *parent)
-    : QObject{parent}
-{
+CryptoController::CryptoController(QObject *parent) : QObject{parent} {
 
 }
 

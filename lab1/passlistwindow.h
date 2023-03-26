@@ -35,6 +35,7 @@ private:
     void createPassTable(QString text);
     QList<Cridentials> * cridentials = nullptr;
     QByteArray hex_hash;
+    QString filename = "C:\\programs\\qtproj\\lab1\\cridentials.enc";
 
 public slots:
     void onTableClicked(const QModelIndex &index);

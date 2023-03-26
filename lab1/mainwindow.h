@@ -15,7 +15,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(bool checkresult, QWidget *parent = nullptr);
     ~MainWindow();
     PassListWindow *passList;
 
@@ -31,7 +31,9 @@ public slots:
     void on_pushButton_clicked();
     void on_passEnterLine_textChanged();
     void pageSwap(bool isCorrect);
+
 private slots:
     void on_debuggerPresentButton_clicked();
+    void on_modifyButton_clicked();
 };
 #endif // MAINWINDOW_H

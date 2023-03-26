@@ -20,7 +20,7 @@ void PassListWindow::check_pass(QString pass) {
     QByteArray hash = QCryptographicHash::hash(pass.toUtf8(), QCryptographicHash::Sha256);
 
     hex_hash = hash.toHex();
-    cridentials = CryptoController::decrypt_file("../lab1/cridentials.enc", hex_hash);
+    cridentials = CryptoController::decrypt_file(filename, hex_hash);
 
     createPassTable("");
     emit pageSwap(true);
@@ -45,13 +45,13 @@ void PassListWindow::createPassTable(QString search_line) {
                 ui->tablePassLog->setItem(ui->tablePassLog->rowCount()-1, 0, item);
 
                 item = new QTableWidgetItem;
-                item->setText("•••••••");
+                item->setText("  •••••••  ");
                 item->setData(Qt::UserRole, "login");
                 item->setTextAlignment(Qt::AlignCenter);
                 ui->tablePassLog->setItem(ui->tablePassLog->rowCount()-1, 1, item);
 
                 item = new QTableWidgetItem;
-                item->setText("•••••••");
+                item->setText("  •••••••  ");
                 item->setData(Qt::UserRole, "password");
                 item->setTextAlignment(Qt::AlignCenter);
                 ui->tablePassLog->setItem(ui->tablePassLog->rowCount()-1, 2, item);
@@ -66,8 +66,7 @@ void PassListWindow::onTableClicked(const QModelIndex &index) {
     if (index.column() != 0) {
         clipboard->setText(CryptoController::decrypt_record(cridentials->toList()[index.row()].encrypted, index.data(Qt::UserRole).toString(), hex_hash));
     } else {
-        clipboard->setText(index.data().toString());
-        qDebug() << index.data(Qt::UserRole).toString();
+        clipboard->setText(index.data(Qt::UserRole).toString());
     }
 }
 
@@ -108,7 +107,7 @@ void PassListWindow::passListSignal(QString url, QByteArray logpass) {
     list.insert("list", array);
     doc.setObject(list);
 
-    if (CryptoController::encrypt_file(doc.toJson(), "../lab1/cridentials.enc", hex_hash)) {
+    if (CryptoController::encrypt_file(doc.toJson(), filename, hex_hash)) {
         createPassTable("");
     } else {
         return;
@@ -132,7 +131,7 @@ void PassListWindow::on_tablePassLog_cellDoubleClicked(int row, int column) {
     list.insert("list", array);
     doc.setObject(list);
 
-    if (CryptoController::encrypt_file(doc.toJson(), "../lab1/cridentials.enc", hex_hash)) {
+    if (CryptoController::encrypt_file(doc.toJson(), filename, hex_hash)) {
         createPassTable("");
     } else {
         return;

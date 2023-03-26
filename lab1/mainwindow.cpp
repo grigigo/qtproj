@@ -2,17 +2,24 @@
 #include "ui_mainwindow.h"
 #include <windows.h>
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(bool checkresult, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow) {
 
     ui->setupUi(this);
+
+    if (!checkresult) {
+        ui->modifyButton->setVisible(false);
+    } else {
+        qDebug() << "Неверный hash!";
+    }
+
     ui->wrongPassAlert->setVisible(false);
     ui->debuggerPresentButton->setVisible(false);
 
-    m_antidebug_timer.setInterval(1000);
-    connect(&m_antidebug_timer, &QTimer::timeout, this, &MainWindow::antidebug_timer);
-    m_antidebug_timer.start();
+//    m_antidebug_timer.setInterval(1000);
+//    connect(&m_antidebug_timer, &QTimer::timeout, this, &MainWindow::antidebug_timer);
+//    m_antidebug_timer.start();
 
     passList = new PassListWindow;
     connect(this, SIGNAL(check_pass(QString)), passList, SLOT(check_pass(QString)));
@@ -41,8 +48,7 @@ void MainWindow::pageSwap(bool isCorrect) {
 
 
 void MainWindow::on_pushButton_clicked() {
-    QString pass = ui->passEnterLine->text();
-    emit check_pass(pass);
+    emit check_pass(ui->passEnterLine->text());
 }
 
 
@@ -52,6 +58,11 @@ void MainWindow::on_passEnterLine_textChanged() {
 
 
 void MainWindow::on_debuggerPresentButton_clicked() {
+    QApplication::quit();
+}
+
+
+void MainWindow::on_modifyButton_clicked() {
     QApplication::quit();
 }
 

@@ -15,6 +15,29 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="7" column="2">
+     <spacer name="verticalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="4" column="2">
+     <widget class="QLabel" name="wrongPassAlert">
+      <property name="text">
+       <string>Введен неверный пароль!</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="1">
      <spacer name="horizontalSpacer">
       <property name="orientation">
@@ -28,10 +51,13 @@
       </property>
      </spacer>
     </item>
-    <item row="6" column="2">
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>Login</string>
+    <item row="1" column="2">
+     <widget class="QLineEdit" name="passEnterLine">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="echoMode">
+       <enum>QLineEdit::Password</enum>
       </property>
      </widget>
     </item>
@@ -61,18 +87,12 @@
       </property>
      </spacer>
     </item>
-    <item row="7" column="2">
-     <spacer name="verticalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
+    <item row="3" column="2">
+     <widget class="QPushButton" name="debuggerPresentButton">
+      <property name="text">
+       <string>Отладчик работает!!!</string>
       </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
+     </widget>
     </item>
     <item row="5" column="2">
      <spacer name="horizontalSpacer_3">
@@ -87,30 +107,17 @@
       </property>
      </spacer>
     </item>
-    <item row="4" column="2">
-     <widget class="QLabel" name="wrongPassAlert">
+    <item row="6" column="2">
+     <widget class="QPushButton" name="pushButton">
       <property name="text">
-       <string>Введен неверный пароль!</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
+       <string>Login</string>
       </property>
      </widget>
     </item>
     <item row="2" column="2">
-     <widget class="QLineEdit" name="passEnterLine">
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="echoMode">
-       <enum>QLineEdit::Password</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="2">
-     <widget class="QPushButton" name="debuggerPresentButton">
+     <widget class="QPushButton" name="modifyButton">
       <property name="text">
-       <string>PushButton</string>
+       <string>Программа была модифицирована</string>
       </property>
      </widget>
     </item>
